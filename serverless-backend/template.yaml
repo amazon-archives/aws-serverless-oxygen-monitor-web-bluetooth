@@ -1,0 +1,199 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  oxygen-monitor
+
+
+Parameters:
+  UserPoolID:
+    Type: String
+    Description: (Required) The user pool ID created by the Amplify frontend.
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+
+  OxygenMonitorApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolID}'
+            Identity:
+              Header: Authorization
+        AddDefaultAuthorizerToCorsPreflight: False
+
+  AddLevels:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Runtime: python3.8
+      CodeUri: lambda_functions/addLevels/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LevelsTable
+      Environment:
+        Variables:
+          LEVELS_TABLE_NAME: !Ref LevelsTable
+      Events:
+        PostResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OxygenMonitorApi
+            Path: /levels
+            Method: post     
+
+  FetchLevels:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Runtime: python3.8
+      CodeUri: lambda_functions/fetchLevels/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LevelsTable
+      Environment:
+        Variables:
+          LEVELS_TABLE_NAME: !Ref LevelsTable
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OxygenMonitorApi
+            Path: /levels
+            Method: get
+  
+  GetSharedUsers:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Runtime: python3.8
+      CodeUri: lambda_functions/sharedUsers/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SharedAccessTable
+      Environment:
+        Variables:
+          ACCESS_TABLE_NAME: !Ref SharedAccessTable
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OxygenMonitorApi
+            Path: /access/shared
+            Method: get          
+
+  FetchUsersWithAccess:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Runtime: python3.8
+      CodeUri: lambda_functions/fetchUsersWithAccess/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SharedAccessTable
+      Environment:
+        Variables:
+          ACCESS_TABLE_NAME: !Ref SharedAccessTable
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OxygenMonitorApi
+            Path: /access/users
+            Method: get        
+
+  ManageAccess:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Runtime: python3.8
+      CodeUri: lambda_functions/manageAccess/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SharedAccessTable
+      Environment:
+        Variables:
+          ACCESS_TABLE_NAME: !Ref SharedAccessTable
+      Events:
+        PostResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OxygenMonitorApi
+            Path: /access
+            Method: post     
+
+  FetchSharedUserLevels:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Runtime: python3.8
+      CodeUri: lambda_functions/fetchSharedUserLevels/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LevelsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SharedAccessTable
+      Environment:
+        Variables:
+          LEVELS_TABLE_NAME: !Ref LevelsTable
+          ACCESS_TABLE_NAME: !Ref SharedAccessTable
+      Events:
+        PostResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OxygenMonitorApi
+            Path: /levels/shared
+            Method: post
+          
+
+  LevelsTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - 
+          AttributeName: "username"
+          AttributeType: "S"
+        - 
+          AttributeName: "timestamp"
+          AttributeType: "N"
+      KeySchema: 
+        - AttributeName: username
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+
+  SharedAccessTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - 
+          AttributeName: "username"
+          AttributeType: "S"
+        - 
+          AttributeName: "shared_user"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: username
+          KeyType: HASH
+        - AttributeName: shared_user
+          KeyType: RANGE
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+
+Outputs:
+  ApiURL:
+    Description: "API endpoint URL for Prod environment"
+    Value: !Sub "https://${OxygenMonitorApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"

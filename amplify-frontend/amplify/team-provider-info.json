@@ -1,0 +1,50 @@
+{
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-oxygen-monitor-prod-223014-authRole",
+            "UnauthRoleArn": "arn:aws:iam::826492788183:role/amplify-oxygen-monitor-prod-223014-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::826492788183:role/amplify-oxygen-monitor-prod-223014-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "amplify-oxygen-monitor-prod-223014-deployment",
+            "UnauthRoleName": "amplify-oxygen-monitor-prod-223014-unauthRole",
+            "StackName": "amplify-oxygen-monitor-prod-223014",
+            "StackId": "arn:aws:cloudformation:us-east-2:826492788183:stack/amplify-oxygen-monitor-prod-223014/bd9581d0-cd6e-11ea-a6ca-06e0ced8ee4a",
+            "AmplifyAppId": "d2df5pl4mu3p2e"
+        },
+        "categories": {
+            "auth": {
+                "oxygenmonitor095ab856": {}
+            },
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d2df5pl4mu3p2e",
+                    "type": "manual"
+                }
+            }
+        }
+    },
+    "omtest": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-oxygen-monitor-omtest-165450-authRole",
+            "UnauthRoleArn": "arn:aws:iam::826492788183:role/amplify-oxygen-monitor-omtest-165450-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::826492788183:role/amplify-oxygen-monitor-omtest-165450-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-oxygen-monitor-omtest-165450-deployment",
+            "UnauthRoleName": "amplify-oxygen-monitor-omtest-165450-unauthRole",
+            "StackName": "amplify-oxygen-monitor-omtest-165450",
+            "StackId": "arn:aws:cloudformation:us-west-2:826492788183:stack/amplify-oxygen-monitor-omtest-165450/b9b46ad0-d5e4-11ea-9979-06b7c09dad0c",
+            "AmplifyAppId": "d2xud76d7qipr6"
+        },
+        "categories": {
+            "auth": {
+                "oxygenmonitor095ab856": {}
+            },
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d2xud76d7qipr6",
+                    "type": "manual"
+                }
+            }
+        }
+    }
+}
