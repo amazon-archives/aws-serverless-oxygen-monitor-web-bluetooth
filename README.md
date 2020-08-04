@@ -8,6 +8,6 @@ This is an example application for interacting with bluetooth pulse oximeters us
 
 ![Application Architecture](https://raw.githubusercontent.com/aws-samples/aws-serverless-oxygen-monitor-web-bluetooth/master/imgs/oxygenMonitorApp.png)
 
-![Levels API](https://raw.githubusercontent.com/aws-samples/aws-serverless-oxygen-monitor-web-bluetooth/master/imgs/levelsTable.png)
+![Levels API](https://raw.githubusercontent.com/aws-samples/aws-serverless-oxygen-monitor-web-bluetooth/master/imgs/levelsAPI.png)
 
 ![Access API](https://raw.githubusercontent.com/aws-samples/aws-serverless-oxygen-monitor-web-bluetooth/master/imgs/accessTable.png)
