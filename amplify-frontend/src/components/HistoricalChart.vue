@@ -44,7 +44,7 @@ export default {
           className: "oxygenlevels"
         },
         {
-          data: [0,127],
+          data: [0,99],
           smooth: true,
           showPoints: true,
           className: "pulserate"
@@ -55,30 +55,51 @@ export default {
         horizontalLines: true
       },
       labels: {
-        xLabels: ["0/00/0000, 00:00:00 PM", "0/00/0000, 00:00:00 PM"],
+        xLabels: ["0/00/0000, 00:00:00 PM", "0/00/0000, 00:00:01 PM"],
         yLabels: 5,
         yLabelsTextFormatter: val => Math.round(val * 100) / 100
       },
       tooltipData: null,
       popper: null,
-      popperIsActive: false
+      popperIsActive: false,
+      timestamps: [0, 1]
     };
   },
-  props: ['oxygenLevels', 'pulseRates', 'timestamps'],
+  props: ['history'],
   watch: { 
-    oxygenLevels: function(val) { 
-      this.datasets[0].data = val;
-    },
-    pulseRates: function(val) { 
-      this.datasets[1].data = val;
-    },
-    timestamps: function(val) { 
-      this.timestamps = val;
-      let tsLength = this.timestamps.length
-      this.labels.xLabels[0] = new Date(this.timestamps[0]).toLocaleString()
-      if( tsLength > 1){
-        this.labels.xLabels[1] = new Date(this.timestamps[tsLength - 1]).toLocaleString()
+    history: function(val) { 
+      let oxygen_levels = val.oxygen_levels;
+      let pulse_rates = val.pulse_rates;
+      let timestamps = val.timestamps;
+
+      if(oxygen_levels.length != 0){
+        if(oxygen_levels.length < 2){
+          this.datasets[0].data = [0,oxygen_levels[0]];
+        }else {
+          this.datasets[0].data = oxygen_levels;
+        }
       }
+
+      if(pulse_rates.length != 0){
+        if(pulse_rates.length < 2){
+          this.datasets[1].data = [0,pulse_rates[0]];
+        }else {
+          this.datasets[1].data = pulse_rates;
+        }
+      }
+
+      if(timestamps.length != 0){
+        this.timestamps = timestamps;
+        let tsLength = timestamps.length
+        if( tsLength > 1){
+          this.labels.xLabels[0] = new Date(timestamps[0]).toLocaleString();
+          this.labels.xLabels[1] = new Date(timestamps[tsLength - 1]).toLocaleString();
+        }else {
+          this.labels.xLabels[0] = "0/00/0000, 00:00:00 PM";
+          this.labels.xLabels[1] = new Date(timestamps[0]).toLocaleString();
+          this.timestamps = [1,timestamps[0]];
+        }
+      }    
     }
   },
   methods: {

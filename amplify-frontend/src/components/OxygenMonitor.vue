@@ -32,10 +32,8 @@
     </div>
     
     <HistoricalChart 
-      v-bind:oxygen-levels="oxygen_levels"
-      v-bind:pulse-rates="pulse_rates"
-      v-bind:timestamps="timestamps"
-     />
+      v-bind:history="history"
+    />
   </div>
 </template>
 
@@ -65,9 +63,11 @@ export default {
   },
   data() {
     return {
-      oxygen_levels: [],
-      pulse_rates: [],
-      timestamps: [],
+      history: {
+        oxygen_levels: [],
+        pulse_rates: [],
+        timestamps: []
+      },
       username: "",
       selected_user: "",
       shared_users: [],
@@ -117,9 +117,7 @@ export default {
       API
         .get(apiName, path, {})
         .then(response => {
-          this.oxygen_levels = response.oxygen_levels;
-          this.pulse_rates = response.pulse_rates;
-          this.timestamps = response.timestamps;
+          this.history = response;
         })
         .catch(error => {
           console.log(error.response);
@@ -136,9 +134,7 @@ export default {
       API
         .post(apiName, path, myInit)
         .then(response => {
-          this.oxygen_levels = response.oxygen_levels;
-          this.pulse_rates = response.pulse_rates;
-          this.timestamps = response.timestamps;
+          this.history = response
         })
         .catch(error => {
           console.log(error.response);
