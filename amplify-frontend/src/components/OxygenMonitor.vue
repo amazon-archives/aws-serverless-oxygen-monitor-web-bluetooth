@@ -1,10 +1,19 @@
 <template>
   <div class="userData">
     <div class="bluetoothElements">
-      <ConnectDevice @bpm="onBPMChange" @oxygenlevels="onOxygenChange" />
+      <ConnectDevice 
+        @bpm="onBPMChange" 
+        @oxygenlevels="onOxygenChange"
+        v-if="!enterManual" 
+      />
+      <input type="checkbox" name="manualSelect" v-model="enterManual">
+      <label for="manualSelect">Enter Manually</label><br>
       <Measurements 
         v-bind:oxygen-level="current_oxygen_level"
         v-bind:pulse-rate="current_pulse_rate"
+        v-bind:manual="enterManual"
+        @manualbpm="onBPMChange" 
+        @manualoxygenlevels="onOxygenChange"
       />
     </div>
     <div class="data-controls">
@@ -73,7 +82,8 @@ export default {
       shared_users: [],
       users_with_access: [],
       current_oxygen_level: '--',
-      current_pulse_rate: '--'
+      current_pulse_rate: '--',
+      enterManual: false
     }
   },
   async mounted() {
