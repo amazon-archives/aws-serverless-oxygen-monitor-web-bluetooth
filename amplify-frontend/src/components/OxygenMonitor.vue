@@ -103,6 +103,10 @@ export default {
         return;
       }
 
+      if(this.current_oxygen_level > 127 || this.current_pulse_rate > 127){
+        return;
+      }
+
       let path = '/levels';
       let myInit = {
         body: {
