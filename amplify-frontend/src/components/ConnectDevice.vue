@@ -6,6 +6,11 @@
     <button class="disconnect" v-on:click="disconnect" v-if="deviceConnected">
     Disconnect Pulse Oximeter
     </button>
+    <p v-if="errorLOGS">
+      {{errorLOGS}} 
+     <button v-on:click="errorLOGS = null">Clear</button>
+    </p>
+    
   </div>
 </template>
 
@@ -20,7 +25,8 @@ export default {
   name: 'ConnectDevice',
   data() {
     return {
-      deviceConnected: false
+      deviceConnected: false,
+      errorLOGS: null
     }
   },
   methods: {
@@ -29,9 +35,11 @@ export default {
       let serviceUuid = '49535343-fe7d-4ae5-8fa9-9fafd205e455'
       let options = {
         optionalServices: [serviceUuid],
-        filters: [{
-            name: 'BerryMed'
-          }]}
+        // filters: [{
+        //     name: 'BerryMed'
+        //   }]
+        acceptAllDevices: true
+      }
 
       console.log('Requesting Bluetooth Device...');
 
@@ -59,6 +67,7 @@ export default {
         })
         .catch(error => {
           console.log('Argh! ' + error);
+          self.errorLOGS = error;
         });
     },
     disconnect: function () {
